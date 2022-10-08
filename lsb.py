@@ -1,6 +1,7 @@
 import sys
 import struct
 import numpy
+import argparse
 import matplotlib.pyplot as plt
 from Crypto.Util.number import long_to_bytes
 
@@ -54,7 +55,7 @@ def set_bit(n, i, x):
     return n
 
 # Embed payload file into LSB bits of an image
-def embed(imgFile, payload, password):
+def embed(imgFile, payload, outFile, password):
     # Process source image
     img = Image.open(imgFile)
     (width, height) = img.size
@@ -98,7 +99,7 @@ def embed(imgFile, payload, password):
             data_img.putpixel((w,h), (r, g, b, a))
             idx = idx + 3
 
-    steg_img.save(imgFile + "-stego.png", "PNG")
+    steg_img.save(outFile, "PNG")
     print("[+] %s embedded successfully!" % payload)
 
 # Extract data embedded into LSB of the input file
@@ -178,23 +179,52 @@ def analyse(in_file):
 
     plt.show()
 
-def usage(progName):
-    print("LSB steganogprahy. Hide files within least significant bits of images.\n")
-    print("Usage:")
-    print("  %s hide [img_file] [payload_file] [password]" % progName
-    print("  %s extract [stego_file] [out_file] [password]" % progName
-    print("  %s analyse [stego_file]" % progName)
-    sys.exit()
+# def show_usage():
+#     sys.exit()
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        usage(sys.argv[0])
+    usage_text = """
+    LSB steganogprahy. Hide files within least significant bits of images.
 
-    if sys.argv[1] == "hide":
-        embed(sys.argv[2], sys.argv[3], sys.argv[4])
-    elif sys.argv[1] == "extract":
-        extract(sys.argv[2], sys.argv[3], sys.argv[4])
-    elif sys.argv[1] == "analyse":
-        analyse(sys.argv[2])
+example:
+    python3 lsb.py hide -i [img_file] -s [payload_file] -o [out_file] -p [password]
+    python3 lsb.py extract -i [stego_file] -o [out_file] -p [password]
+    python3 lsb.py analyse -i [stego_file]
+    """
+        
+    parser = argparse.ArgumentParser(usage_text)
+    parser.add_argument('-i', help='file input', type=str, dest='in_file')
+    parser.add_argument('-o', help='file output', type=str, dest='out_file', default='out.png')
+    parser.add_argument('-s', help='file to hide as secret', type=str, dest='secret_file')
+    parser.add_argument('-p', help='passcode for hide/extract secret', type=str, dest='password')    
+
+    if len(sys.argv) <= 1:
+        parser.print_help()
+        exit()
+        
+    u = sys.argv.pop(1)
+
+    args = parser.parse_args()
+    
+    if u == "hide":
+        if args.in_file and args.secret_file and args.out_file and args.password:
+            embed(args.in_file,
+                  args.secret_file,
+                  args.out_file,
+                  args.password)
+        else:
+            parser.print_help()
+    elif u == "extract":
+        if args.in_file and args.out_file and args.password:
+            extract(args.in_file,
+                    args.out_file,
+                    args.password)
+        else:
+            parser.print_help()
+    elif u == "analyse":
+        if args.in_file:
+            analyse(args.in_file)
+        else:
+            parser.print_help()
     else:
-        print("[-] Invalid operation specified")
+        parser.print_help()
