@@ -181,9 +181,9 @@ def analyse(in_file):
 def usage(progName):
     print("LSB steganogprahy. Hide files within least significant bits of images.\n")
     print("Usage:")
-    print("  %s hide <img_file> <payload_file> <password>" % progName)
-    print("  %s extract <stego_file> <out_file> <password>" % progName)
-    print("  %s analyse <stego_file>" % progName)
+    print("  %s hide [img_file] [payload_file] [password]" % progName
+    print("  %s extract [stego_file] [out_file] [password]" % progName
+    print("  %s analyse [stego_file]" % progName)
     sys.exit()
 
 if __name__ == "__main__":
