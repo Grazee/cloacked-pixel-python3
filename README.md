@@ -23,7 +23,7 @@ python3 lsb.py hide -i [img_file] -s [payload_file] -o [out_file] -p [password]
 **For example**, hide `secret.png` into `origin.jpg` with password `1234567`.
 
 ```shell
-python3 lsb.py hide -i images/origin.jpg -s images/secret.png -o stego.png -p 1234567
+python3 lsb.py hide -i example/origin.jpg -s example/secret.png -o stego.png -p 1234567
 ```
 
 The command above will generate a new file named `stego.png`.
@@ -38,5 +38,5 @@ python3 lsb.py extract -i [stego_file] -o [out_file] -p [password]
 **For example**, extract secret data from `stego.jpg` with password `1234567`, and save those data as file `secret.png`:
 
 ```shell
-python3 lsb.py extract -i images/stego.png -o secret.png -p 1234567
+python3 lsb.py extract -i example/stego.png -o secret.png -p 1234567
 ```
